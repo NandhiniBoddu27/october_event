@@ -4,3 +4,6 @@
 */.env
 .DS_Store
 __pycache__
+backend_logic_test.py
+Test_backend
+cdp_test

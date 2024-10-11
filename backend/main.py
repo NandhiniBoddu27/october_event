@@ -1,8 +1,18 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 import backend_logic
 
+
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
 
 
 @app.get("/")
@@ -37,7 +47,8 @@ async def api_get_product_category_performance():
 
 @app.get("/customer_satisfaction")
 async def api_get_customer_satisfaction():
-    return JSONResponse(content=await backend_logic.get_customer_satisfaction())
+    return JSONResponse( message = "successfully conected")
+    # return JSONResponse(content=await backend_logic.get_customer_satisfaction())
 
 
 @app.get("/churn_risk")

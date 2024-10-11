@@ -1,0 +1,207 @@
+# Customer Data Platform (CDP) Application Design Document
+
+## Page 1: Project Overview and Authentication
+
+### Project Name: Unified Customer Insights Platform
+
+**Tagline:** Empowering data-driven decisions through comprehensive customer understanding.
+
+### Google SSO Authentication
+
+The Unified Customer Insights Platform will implement Google Single Sign-On (SSO) for secure and seamless user authentication. This approach aligns with best practices discussed by our DevOps team, emphasizing security and user experience.
+
+#### Authentication Process:
+1. Users initiate login via a prominent "Sign in with Google" button on the login page.
+2. The application redirects to Google's OAuth 2.0 server.
+3. Users authenticate with their Google credentials.
+4. Upon successful authentication, Google returns an authorization code.
+5. The backend exchanges this code for access and refresh tokens.
+6. The application creates or updates the user session, storing necessary information securely.
+
+#### Error Handling:
+- Implement graceful error handling for network issues, invalid credentials, or server errors.
+- Display user-friendly error messages with clear next steps.
+- Log detailed error information for backend analysis and troubleshooting.
+
+#### Security Considerations:
+- Use HTTPS for all communications to ensure data encryption in transit.
+- Implement token rotation and secure storage of refresh tokens.
+- Set appropriate token expiration times and implement automatic token refresh.
+- Use state parameters to prevent CSRF attacks during the OAuth flow.
+
+#### Authentication Interface Design:
+- Minimalist login page with the CDP logo and tagline.
+- Prominent "Sign in with Google" button using Google's official button design guidelines.
+- Brief explanation of the benefits of using Google SSO (e.g., enhanced security, convenience).
+- Loading indicator during the authentication process.
+- Clear visual feedback upon successful login or errors.
+
+By leveraging Google SSO, we ensure a secure, user-friendly authentication process that aligns with modern security practices and reduces the friction of account management for our users.
+
+## Page 2: Dashboard Design and Components
+
+### Dashboard Layout and Structure
+
+The dashboard will utilize a responsive 12-column grid system to ensure optimal display across various device sizes. This approach aligns with the UI Developer's emphasis on flexibility and customization.
+
+#### Navigation Design:
+- Top horizontal navigation bar with the CDP logo, user profile, and main menu items.
+- Left sidebar for detailed navigation, collapsible on smaller screens.
+- Main content area occupying the central and right portions of the screen.
+
+#### Screen Real Estate Allocation:
+- Header: 10% of vertical space
+- Left sidebar (when expanded): 20% of horizontal space
+- Main content area: 80% of horizontal space (100% when sidebar is collapsed)
+- Individual components will be sized relative to the main content area
+
+### Key Dashboard Components and API Mapping
+
+#### a. Key Performance Indicators (KPIs)
+- API Endpoint: `/kpis`
+- Visual: Card-based layout with numerical displays and trend indicators
+- Data: `total_lifetime_value`, `total_purchases`, `avg_satisfaction_score`
+- Interactivity: Hover for detailed breakdown, click for historical trend
+- Update Frequency: Real-time updates using WebSocket connection
+
+#### b. Customer Segment Distribution (Pie Chart)
+- API Endpoint: `/customer_segments`
+- Visual: Interactive pie chart with legend
+- Data: Aggregated `customer_segment` data
+- Interactivity: Hover for percentage, click to filter dashboard by segment
+- Update Frequency: Daily refresh, with on-demand update option
+
+#### c. Monthly Revenue Trend (Line Chart)
+- API Endpoint: `/monthly_revenue`
+- Visual: Line chart with option to overlay previous year
+- Data: Aggregated monthly `total_lifetime_value`
+- Interactivity: Zoom and pan functionality, hover for detailed values
+- Update Frequency: Monthly, with real-time estimates for current month
+
+#### d. Top 5 Customers by Lifetime Value (Table)
+- API Endpoint: `/top_customers`
+- Visual: Sortable table with customer details
+- Data: `customer_id`, `first_name`, `last_name`, `total_lifetime_value`
+- Interactivity: Click on customer for detailed profile view
+- Update Frequency: Daily refresh
+
+#### e. Product Category Performance (Bar Chart)
+- API Endpoint: `/product_category_performance`
+- Visual: Horizontal bar chart showing performance by category
+- Data: Aggregated `favorite_category` data with associated revenue
+- Interactivity: Sort by different metrics (revenue, volume, growth)
+- Update Frequency: Weekly refresh
+
+#### f. Customer Satisfaction Score (Gauge Chart)
+- API Endpoint: `/customer_satisfaction`
+- Visual: Gauge chart with color-coded zones
+- Data: Average of `avg_satisfaction_score`
+- Interactivity: Hover for trend over time, click for breakdown by segment
+- Update Frequency: Real-time updates based on new feedback
+
+#### g. Churn Risk Distribution (Pie Chart)
+- API Endpoint: `/churn_risk`
+- Visual: Pie chart with risk categories
+- Data: Distribution of `churn_risk` categories
+- Interactivity: Click on risk category to view affected customers
+- Update Frequency: Daily refresh with real-time flagging of high-risk changes
+
+#### h. RFM Segmentation (Scatter Plot)
+- API Endpoint: `/rfm_segmentation`
+- Visual: 3D scatter plot (can be toggled to 2D views)
+- Data: Recency (`days_since_last_purchase`), Frequency (`total_purchases`), Monetary (`total_lifetime_value`)
+- Interactivity: Rotate, zoom, and filter functionality
+- Update Frequency: Weekly refresh with daily updates for significant changes
+
+### Dashboard Interactivity and User Experience
+
+- Global date range filter affecting all components
+- Search functionality for finding specific customers or products
+- Cross-component data linking (e.g., clicking a segment in the Customer Segment chart filters other components)
+- Customizable dashboard layout with drag-and-drop widget positioning
+- User preference saving for layout and default filters
+
+## Page 3: Architecture Visualization and Technical Considerations
+
+### Sankey Diagram Implementation
+
+The Sankey diagram will be implemented to visualize the data flow in our CDP, based on the provided diagram structure.
+
+#### Data Flow Representation:
+- Source nodes: `customer_info`, `purchase_transactions`, `product_catalog`, `customer_service`, `campaign_responses`, `marketing_campaigns`, `website_behavior`
+- Intermediate nodes: `temp_basic_info`, `temp_purchase_stats`, `temp_product_preferences`, `temp_customer_service_stats`, `temp_campaign_engagement`, `temp_website_behavior`
+- Target node: `customer_360`
+
+#### Styling Guidelines:
+- Use a color scheme that distinguishes between source, intermediate, and target nodes
+- Adjust link thickness based on data volume or importance
+- Implement smooth curves for links to enhance visual appeal
+
+#### Interactivity Features:
+- Hover over nodes or links to highlight the connected paths
+- Click on nodes to expand/collapse and show more detailed information
+- Implement zooming and panning for exploring large diagrams
+- Provide tooltips with data summaries when hovering over nodes or links
+
+#### Implementation Steps:
+1. Use a JavaScript library like D3.js for rendering the Sankey diagram
+2. Create a data structure that represents nodes and links
+3. Implement the layout algorithm to position nodes and calculate link paths
+4. Add interactivity using event listeners (mouseover, click, etc.)
+5. Implement responsive design to adjust diagram size based on screen dimensions
+
+### Data Integration and Performance
+
+- Implement efficient data loading using pagination and lazy loading techniques
+- Utilize client-side caching for frequently accessed data
+- Implement WebSocket connections for real-time updates on critical metrics
+- Use IndexedDB for offline data storage and faster subsequent loads
+- Implement error boundaries and fallback UI components for robustness
+
+### Responsive Design and Cross-platform Considerations
+
+- Define breakpoints: Desktop (1200px+), Tablet (768px-1199px), Mobile (<768px)
+- Use CSS Grid and Flexbox for flexible layouts
+- Implement touch-friendly controls for mobile users (e.g., larger touch targets)
+- Use progressive enhancement to add features based on device capabilities
+- Optimize data visualization components for various screen sizes
+
+## Page 4: Website Flow and API Integration
+
+### Website Flow
+
+1. User arrives at the login page and authenticates via Google SSO
+2. Upon successful authentication, user is redirected to the main dashboard
+3. Dashboard initializes by loading essential components (KPIs, Customer Segments)
+4. Additional components load asynchronously to improve perceived performance
+5. User can interact with various components, triggering API calls as needed
+6. Navigation between different sections (e.g., detailed customer profiles) is handled via client-side routing
+
+### API Integration
+
+The dashboard integrates with backend APIs for each component:
+
+```json
+{
+  "kpis": "/kpis",
+  "customer_segments": "/customer_segments",
+  "monthly_revenue": "/monthly_revenue",
+  "top_customers": "/top_customers",
+  "product_category_performance": "/product_category_performance",
+  "customer_satisfaction": "/customer_satisfaction",
+  "churn_risk": "/churn_risk",
+  "rfm_segmentation": "/rfm_segmentation"
+}
+```
+
+Each API call will include necessary parameters (e.g., date ranges, filters) and handle pagination where applicable. Error handling will include retry logic for transient failures and graceful degradation for component-specific issues.
+
+### Data Refresh and Real-time Updates
+
+- Implement a combination of polling and WebSocket connections for real-time updates
+- Use an event-driven architecture to propagate changes across components
+- Implement optimistic UI updates for improved perceived performance
+- Handle data conflicts through version control or timestamp-based resolution
+- Provide visual indicators for data freshness and ongoing update processes
+
+By following this comprehensive design document, UI developers will have a clear roadmap for implementing a robust, user-friendly, and data-rich CDP application that leverages the full potential of the provided schema and aligns with the insights shared in the development team discussions.

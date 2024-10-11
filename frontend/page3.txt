@@ -1,0 +1,202 @@
+## Page 3: Architecture Visualization and Technical Considerations
+
+### Sankey Diagram Implementation
+
+The Sankey diagram will be implemented to visualize the data flow in our CDP, based on the provided diagram structure.
+
+#### Data Flow Representation:
+- Source nodes: `customer_info`, `purchase_transactions`, `product_catalog`, `customer_service`, `campaign_responses`, `marketing_campaigns`, `website_behavior`
+- Intermediate nodes: `temp_basic_info`, `temp_purchase_stats`, `temp_product_preferences`, `temp_customer_service_stats`, `temp_campaign_engagement`, `temp_website_behavior`
+- Target node: `customer_360`
+
+#### Styling Guidelines:
+- Use a color scheme that distinguishes between source, intermediate, and target nodes
+- Adjust link thickness based on data volume or importance
+- Implement smooth curves for links to enhance visual appeal
+
+#### Interactivity Features:
+- Hover over nodes or links to highlight the connected paths
+- Provide tooltips with data summaries when hovering over nodes or links
+
+#### Implementation Steps:
+1. Create a simple sample data that represents nodes and links to use for sankey diagram
+2. Implement responsive design to adjust diagram size based on screen dimensions
+
+### Responsive Design and Cross-platform Considerations
+- make sure the diagram is centered in the page taking constant width of 600px
+- Define breakpoints: Desktop (1200px+), Tablet (768px-1199px), Mobile (<768px)
+- Use CSS Grid and Flexbox for flexible layouts
+- Use progressive enhancement to add features based on device capabilities
+- Optimize data visualization components for various screen sizes
+
+Use this React code as an example to generate the necessary page functionality -
+
+import React, { useState, useCallback, useMemo } from 'react';
+import { ConfigProvider, Layout, Typography, Spin } from 'antd';
+import Plotly from 'plotly.js-dist-min';
+import PropTypes from 'prop-types';
+
+const { Content } = Layout;
+const { Title } = Typography;
+
+const theme = {
+  token: {
+    colorPrimary: '#ffb800',
+    colorLink: '#ffb800',
+    colorLinkHover: '#f7931f',
+    colorBgLayout: '#ffffff',
+    colorInfo: '#ffb800'
+  },
+  components: {
+    Layout: {
+      siderBg: 'rgb(245,245,245)',
+      triggerBg: 'rgb(241,241,241)'
+    }
+  }
+};
+
+const data = {
+  nodes: [
+    { name: 'customer_info', color: '#1890ff', value: 300 },
+    { name: 'purchase_transactions', color: '#1890ff', value: 250 },
+    { name: 'product_catalog', color: '#1890ff', value: 200 },
+    { name: 'customer_service', color: '#1890ff', value: 150 },
+    { name: 'campaign_responses', color: '#1890ff', value: 180 },
+    { name: 'marketing_campaigns', color: '#1890ff', value: 220 },
+    { name: 'website_behavior', color: '#1890ff', value: 280 },
+    { name: 'temp_basic_info', color: '#52c41a', value: 300 },
+    { name: 'temp_purchase_stats', color: '#52c41a', value: 250 },
+    { name: 'temp_product_preferences', color: '#52c41a', value: 200 },
+    { name: 'temp_customer_service_stats', color: '#52c41a', value: 150 },
+    { name: 'temp_campaign_engagement', color: '#52c41a', value: 180 },
+    { name: 'temp_website_behavior', color: '#52c41a', value: 280 },
+    { name: 'customer_360', color: '#fa8c16', value: 500 }
+  ],
+  links: [
+    { source: 'customer_info', target: 'temp_basic_info', value: 300 },
+    { source: 'purchase_transactions', target: 'temp_purchase_stats', value: 250 },
+    { source: 'product_catalog', target: 'temp_product_preferences', value: 200 },
+    { source: 'customer_service', target: 'temp_customer_service_stats', value: 150 },
+    { source: 'campaign_responses', target: 'temp_campaign_engagement', value: 180 },
+    { source: 'marketing_campaigns', target: 'temp_campaign_engagement', value: 220 },
+    { source: 'website_behavior', target: 'temp_website_behavior', value: 280 },
+    { source: 'temp_basic_info', target: 'customer_360', value: 300 },
+    { source: 'temp_purchase_stats', target: 'customer_360', value: 250 },
+    { source: 'temp_product_preferences', target: 'customer_360', value: 200 },
+    { source: 'temp_customer_service_stats', target: 'customer_360', value: 150 },
+    { source: 'temp_campaign_engagement', target: 'customer_360', value: 400 },
+    { source: 'temp_website_behavior', target: 'customer_360', value: 280 }
+  ]
+};
+
+const SankeyDiagram = ({ data }) => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  const chartData = useMemo(() => [
+    {
+      type: 'sankey',
+      orientation: 'h',
+      node: {
+        pad: 15,
+        thickness: 30,
+        line: {
+          color: 'black',
+          width: 0.5
+        },
+        label: data.nodes.map(node => node.name),
+        color: data.nodes.map(node => node.color)
+      },
+      link: {
+        source: data.links.map(link => data.nodes.findIndex(node => node.name === link.source)),
+        target: data.links.map(link => data.nodes.findIndex(node => node.name === link.target)),
+        value: data.links.map(link => link.value)
+      }
+    }
+  ], [data]);
+
+  const layout = useMemo(() => ({
+    title: 'CDP Data Flow Sankey Diagram',
+    font: {
+      size: 10
+    },
+    autosize: true,
+    margin: {
+      l: 0,
+      r: 0,
+      b: 0,
+      t: 40,
+      pad: 4
+    }
+  }), []);
+
+  const config = useMemo(() => ({
+    responsive: true,
+    displayModeBar: true,
+    modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+    displaylogo: false
+  }), []);
+
+  const plotlyRef = useCallback(node => {
+    if (node) {
+      Plotly.newPlot(node, chartData, layout, config).then(() => {
+        setIsLoading(false);
+        window.addEventListener('resize', () => {
+          Plotly.Plots.resize(node);
+        });
+      });
+
+      node.on('plotly_click', (eventData) => {
+        const pointData = eventData.points[0];
+        console.log('Clicked node:', pointData.label);
+        // Implement expand/collapse functionality here
+      });
+
+      node.on('plotly_hover', (eventData) => {
+        const pointData = eventData.points[0];
+        console.log('Hovered node:', pointData.label);
+        // Implement path highlighting here
+      });
+    }
+  }, [chartData, layout, config]);
+
+  return (
+    <ConfigProvider theme={theme}>
+      <Layout>
+        <Content style={{ padding: '20px' }}>
+          <Title level={2}>CDP Architecture Visualization</Title>
+          {isLoading && <Spin size="large" />}
+          <div
+            ref={plotlyRef}
+            style={{
+              width: '100%',
+              height: '600px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          />
+        </Content>
+      </Layout>
+    </ConfigProvider>
+  );
+};
+
+SankeyDiagram.propTypes = {
+  data: PropTypes.shape({
+    nodes: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      color: PropTypes.string.isRequired,
+      value: PropTypes.number.isRequired
+    })).isRequired,
+    links: PropTypes.arrayOf(PropTypes.shape({
+      source: PropTypes.string.isRequired,
+      target: PropTypes.string.isRequired,
+      value: PropTypes.number.isRequired
+    })).isRequired
+  }).isRequired
+};
+
+export default SankeyDiagram;
+
+// Usage:
+// <SankeyDiagram data={mockData} />

@@ -1,0 +1,22 @@
+## Page 4: Website Flow and API Integration
+
+just display this 
+
+```mermaid
+graph TD
+    A[User Visits Site] --> B{Authenticated?}
+    B -->|No| C[Display SSO Login]
+    C --> D[Google SSO Process]
+    D --> E[Redirect to Dashboard]
+    B -->|Yes| E
+    E --> F[Initialize Dashboard]
+    F --> G[Load KPIs]
+    F --> H[Load Charts]
+    F --> I[Load Tables]
+    G --> J[Dashboard Ready]
+    H --> J
+    I --> J
+    J --> K[User Interacts with Dashboard]
+    K --> L[Update Components]
+    L --> K
+```

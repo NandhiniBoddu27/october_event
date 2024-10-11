@@ -1,0 +1,114 @@
+You will be given a markdown text containing information about API endpoints. Your task is to analyze this text, identify the API endpoints, and write JavaScript code using the fetch API to make calls to these endpoints.
+
+Here is the markdown text:
+<markdown>
+## Page 2: Dashboard Design and Components
+
+### Dashboard Layout and Structure
+
+The dashboard will utilize a responsive 12-column grid system to ensure optimal display across various device sizes. This approach aligns with the UI Developer's emphasis on flexibility and customization.
+
+#### Navigation Design:
+- Top horizontal navigation bar with the CDP logo, user profile, and main menu items.
+- Left sidebar for detailed navigation, collapsible on smaller screens.
+- Main content area occupying the central and right portions of the screen.
+
+#### Screen Real Estate Allocation:
+- Header: 10% of vertical space
+- Left sidebar (when expanded): 20% of horizontal space
+- Main content area: 80% of horizontal space (100% when sidebar is collapsed)
+- Individual components will be sized relative to the main content area
+
+### Key Dashboard Components and API Mapping
+
+#### a. Key Performance Indicators (KPIs)
+- API Endpoint: `/kpis`
+- Visual: Card-based layout with numerical displays and trend indicators
+- Data: `total_customers`,`total_lifetime_value`,`average_order_value`,`retention_rate`
+- Interactivity: Hover for detailed breakdown, click for historical trend
+
+#### b. Customer Segment Distribution (Pie Chart)
+- API Endpoint: `/customer_segments`
+- Visual: Interactive pie chart with legend
+- Data: Aggregated `customer_segment` data
+- Interactivity: Hover for percentage, click to filter dashboard by segment
+
+#### c. Monthly Revenue Trend (Line Chart)
+- API Endpoint: `/monthly_revenue`
+- Visual: Line chart with option to overlay previous year
+- Data: Aggregated monthly `total_lifetime_value`
+- Interactivity: Zoom and pan functionality, hover for detailed values
+- Update Frequency: Monthly, with real-time estimates for current month
+
+#### d. Top 5 Customers by Lifetime Value (Table)
+- API Endpoint: `/top_customers`
+- Visual: Sortable table with customer details
+- Data: `customer_id`, `first_name`, `last_name`, `total_lifetime_value`
+- Interactivity: Click on customer for detailed profile view
+
+#### e. Product Category Performance (Bar Chart)
+- API Endpoint: `/product_category_performance`
+- Visual: Horizontal bar chart showing performance by category
+- Data: Aggregated `favorite_category` data with associated revenue
+- Interactivity: Sort by different metrics (revenue, volume, growth)
+- Update Frequency: Weekly refresh
+
+#### f. Customer Satisfaction Score (Gauge Chart)
+- API Endpoint: `/customer_satisfaction`
+- Visual: Gauge chart with color-coded zones
+- Data: Average of `avg_satisfaction_score`
+- Interactivity: Hover for trend over time, click for breakdown by segment
+- Update Frequency: Real-time updates based on new feedback
+
+#### g. Churn Risk Distribution (Pie Chart)
+- API Endpoint: `/churn_risk`
+- Visual: Pie chart with risk categories
+- Data: Distribution of `churn_risk` categories
+- Interactivity: Click on risk category to view affected customers
+
+#### h. RFM Segmentation (Scatter Plot)
+- API Endpoint: `/rfm_segmentation`
+- Visual: 3D scatter plot (can be toggled to 2D views)
+- Data: Recency (`days_since_last_purchase`), Frequency (`total_purchases`), Monetary (`total_lifetime_value`)
+- Interactivity: Rotate, zoom, and filter functionality
+
+### Dashboard Interactivity and User Experience
+
+- Global date range filter affecting all components
+- Search functionality for finding specific customers or products
+- Cross-component data linking (e.g., clicking a segment in the Customer Segment chart filters other components)
+- Customizable dashboard layout with drag-and-drop widget positioning
+- User preference saving for layout and default filters
+
+</markdown>
+
+Follow these steps:
+
+1. Extract relevant quotes:
+   Identify and extract quotes from the markdown text that mention API endpoints. Place these quotes within <quotes></quotes> tags.
+
+2. Identify API endpoints:
+   Based on the extracted quotes, create a list of all identified API endpoints along with a brief description of what each endpoint should do. Format this list as follows:
+   <api>
+   [API Name]: [Description]
+   (Repeat for each API)
+   </api>
+
+3. Write JavaScript code:
+   For each API endpoint identified in step 2, write JavaScript code using the fetch API to make calls to these endpoints. Include appropriate error handling and response processing.
+
+Provide your output in the following format:
+
+<quotes>
+(Insert relevant quotes here)
+</quotes>
+
+<api>
+(Insert list of API endpoints and descriptions here)
+</api>
+
+<output>
+(Insert JavaScript code here)
+</output>
+
+Ensure that your JavaScript code is correct, well-structured, and follows best practices for using the fetch API. This is critical for the task's success.
