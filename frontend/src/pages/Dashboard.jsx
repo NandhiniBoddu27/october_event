@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Layout, Menu, Card, Table, ConfigProvider } from 'antd';
 import { UserOutlined, DashboardOutlined, TeamOutlined, ShoppingOutlined, BarChartOutlined } from '@ant-design/icons';
