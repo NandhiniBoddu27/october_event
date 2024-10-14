@@ -3,9 +3,10 @@ import { Layout, Menu, Avatar, Typography, DatePicker, Row, Col, Card, Table, Co
 import { UserOutlined, AppstoreOutlined, BarChartOutlined, DashboardOutlined, CustomerServiceOutlined } from '@ant-design/icons';
 import Plotly from 'plotly.js-dist-min';
 import { useNavigate } from 'react-router-dom';
+import {Header, Content} from 'antd/es/layout/layout';
+import { Sider } from 'antd/es/layout/Sider';
+import { Item } from 'antd/es/menu/menu';
 
-
-const { Header, Sider, Content } = Layout;
 const { RangePicker } = DatePicker;
 const { Title } = Typography;
 
@@ -296,21 +297,21 @@ const Dashboard = () => {
               }
             }}
           >
-            <Menu.Item key="1" icon={<DashboardOutlined />}>
+            <Item key="1" icon={<DashboardOutlined />}>
               Dashboard
-            </Menu.Item>
-            <Menu.Item key="2" icon={<BarChartOutlined />} onClick={()=>{
+            </Item>
+            <Item key="2" icon={<BarChartOutlined />} onClick={()=>{
               console.log("clicked")
               navigate('/cdp-transformation')
             }}>
               Analytics
-            </Menu.Item>
-            <Menu.Item key="3" icon={<UserOutlined />} onClick={()=>{
+            </Item>
+            <Item key="3" icon={<UserOutlined />} onClick={()=>{
               console.log("clicked")
               navigate('/userflow')
             }}>
               User Flow
-            </Menu.Item>
+            </Item>
           </Menu>
         </Sider>
         <Layout className="site-layout">
