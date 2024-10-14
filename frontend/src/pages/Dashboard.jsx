@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Avatar, Typography, DatePicker, Row, Col, Card, Table, ConfigProvider } from 'antd';
 import { UserOutlined, AppstoreOutlined, BarChartOutlined, DashboardOutlined, CustomerServiceOutlined } from '@ant-design/icons';
 import Plotly from 'plotly.js-dist-min';
+import { useNavigate } from 'react-router-dom';
+
 
 const { Header, Sider, Content } = Layout;
 const { RangePicker } = DatePicker;
@@ -17,62 +19,23 @@ const Dashboard = () => {
   const [satisfactionScore, setSatisfactionScore] = useState(0);
   const [churnRisk, setChurnRisk] = useState([]);
   const [rfmSegmentation, setRfmSegmentation] = useState([]);
+  const navigate = useNavigate();
 
-  useEffect(() => {
+
     // Fetch data from APIs (mock data with more variations)
-    setKpiData({
-      total_lifetime_value: 2345678,
-      total_purchases: 78945,
-      avg_satisfaction_score: 4.3,
-    });
-    setCustomerSegments([
-      { name: 'Loyal', value: 30 },
-      { name: 'Potential', value: 25 },
-      { name: 'New', value: 20 },
-      { name: 'At Risk', value: 15 },
-      { name: 'Lost', value: 10 }
-    ]);
-    setMonthlyRevenue([
-      { month: 'Jan', revenue: 150000 },
-      { month: 'Feb', revenue: 180000 },
-      { month: 'Mar', revenue: 220000 },
-      { month: 'Apr', revenue: 190000 },
-      { month: 'May', revenue: 210000 },
-      { month: 'Jun', revenue: 240000 },
-      { month: 'Jul', revenue: 260000 },
-      { month: 'Aug', revenue: 280000 },
-      { month: 'Sep', revenue: 270000 },
-      { month: 'Oct', revenue: 290000 },
-      { month: 'Nov', revenue: 310000 },
-      { month: 'Dec', revenue: 350000 }
-    ]);
-    setTopCustomers([
-      { key: '1', customer_id: '001', first_name: 'John', last_name: 'Doe', total_lifetime_value: 25000 },
-      { key: '2', customer_id: '002', first_name: 'Jane', last_name: 'Smith', total_lifetime_value: 22000 },
-      { key: '3', customer_id: '003', first_name: 'Robert', last_name: 'Johnson', total_lifetime_value: 20500 },
-      { key: '4', customer_id: '004', first_name: 'Emily', last_name: 'Brown', total_lifetime_value: 19800 },
-      { key: '5', customer_id: '005', first_name: 'Michael', last_name: 'Davis', total_lifetime_value: 18900 }
-    ]);
-    setProductPerformance([
-      { category: 'Electronics', revenue: 980000 },
-      { category: 'Clothing', revenue: 750000 },
-      { category: 'Books', revenue: 420000 },
-      { category: 'Home & Garden', revenue: 680000 },
-      { category: 'Sports & Outdoors', revenue: 540000 },
-      { category: 'Beauty & Personal Care', revenue: 390000 }
-    ]);
-    setSatisfactionScore(4.3);
-    setChurnRisk([
-      { risk: 'Low', value: 55 },
-      { risk: 'Medium', value: 30 },
-      { risk: 'High', value: 15 }
-    ]);
-    setRfmSegmentation(Array.from({ length: 100 }, () => ({
-      recency: Math.floor(Math.random() * 100),
-      frequency: Math.floor(Math.random() * 50),
-      monetary: Math.floor(Math.random() * 10000)
-    })));
-  }, []);
+    useEffect(() => {
+
+      fetchKPIs();
+      fetchCustomerSegments();
+      fetchMonthlyRevenue();
+      fetchTopCustomers();
+      fetchProductPerformance();
+      fetchCustomerSatisfaction();
+      fetchChurnRisk();
+      fetchRFMSegmentation()
+  
+      
+    }, []);
 
   useEffect(() => {
     // Create charts after data is loaded
@@ -84,10 +47,117 @@ const Dashboard = () => {
     if (rfmSegmentation.length > 0) createRFMSegmentationChart();
   }, [customerSegments, monthlyRevenue, productPerformance, satisfactionScore, churnRisk, rfmSegmentation]);
 
+  const domain="http://localhost:800"
+  const fetchKPIs = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/kpis');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log(data)
+      setKpiData(data);
+    } catch (error) {
+      console.error('Error fetching KPIs:', error);
+    }
+  };
+
+  const fetchCustomerSegments = async () => {
+    try {
+      const response = await fetch(domain+'/customer_segments');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setCustomerSegments(data);
+    } catch (error) {
+      console.error('Error fetching customer segments:', error);
+    }
+  };
+
+  const fetchMonthlyRevenue = async () => {
+    try {
+      const response = await fetch(domain+'/monthly_revenue');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setMonthlyRevenue(data);
+    } catch (error) {
+      console.error('Error fetching monthly revenue:', error);
+    }
+  };
+
+  const fetchTopCustomers = async () => {
+    try {
+      const response = await fetch(domain+'/top_customers');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setTopCustomers(data);
+    } catch (error) {
+      console.error('Error fetching top customers:', error);
+    }
+  };
+
+  const fetchProductPerformance = async () => {
+    try {
+      const response = await fetch(domain+'/product_category_performance');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setProductPerformance(data);
+    } catch (error) {
+      console.error('Error fetching product performance:', error);
+    }
+  };
+
+  const fetchCustomerSatisfaction = async () => {
+    try {
+      const response = await fetch(domain+'/customer_satisfaction');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setSatisfactionScore(data);
+    } catch (error) {
+      console.error('Error fetching customer satisfaction:', error);
+    }
+  };
+
+  const fetchChurnRisk = async () => {
+    try {
+      const response = await fetch(domain+'/churn_risk');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setChurnRisk(data);
+    } catch (error) {
+      console.error('Error fetching churn risk:', error);
+    }
+  };
+
+  const fetchRFMSegmentation = async () => {
+    try {
+      const response = await fetch(domain+'/rfm_segmentation');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setRfmSegmentation(data);
+    } catch (error) {
+      console.error('Error fetching RFM segmentation:', error);
+    }
+  };
+
   const createCustomerSegmentsChart = () => {
     const data = [{
-      values: customerSegments.map(segment => segment.value),
-      labels: customerSegments.map(segment => segment.name),
+      values: customerSegments[0].values,
+      labels: customerSegments[0].labels,
       type: 'pie'
     }];
     const layout = { title: 'Customer Segment Distribution', height: 300, margin: { t: 30, b: 30, l: 30, r: 30 } };
@@ -96,8 +166,8 @@ const Dashboard = () => {
 
   const createMonthlyRevenueChart = () => {
     const data = [{
-      x: monthlyRevenue.map(item => item.month),
-      y: monthlyRevenue.map(item => item.revenue),
+      x: monthlyRevenue[0].x,
+      y: monthlyRevenue[0].y,
       type: 'scatter',
       mode: 'lines+markers'
     }];
@@ -107,8 +177,8 @@ const Dashboard = () => {
 
   const createProductPerformanceChart = () => {
     const data = [{
-      y: productPerformance.map(item => item.category),
-      x: productPerformance.map(item => item.revenue),
+      y: productPerformance.y,
+      x: productPerformance.x,
       type: 'bar',
       orientation: 'h'
     }];
@@ -120,17 +190,12 @@ const Dashboard = () => {
     const data = [{
       type: 'indicator',
       mode: 'gauge+number',
-      value: satisfactionScore,
+      value: satisfactionScore[0].value,
       title: { text: 'Customer Satisfaction Score' },
-      gauge: {
-        axis: { range: [null, 5] },
-        bar: { color: 'darkblue' },
-        steps: [
-          { range: [0, 2], color: 'red' },
-          { range: [2, 3.5], color: 'yellow' },
-          { range: [3.5, 5], color: 'green' }
-        ],
-      }
+      gauge:satisfactionScore[0].gauge, 
+        domain: satisfactionScore[0].domain,
+        hovertemplate: satisfactionScore[0].hovertemplate,
+        alignmentgroup: satisfactionScore[0].alignmentgroup,
     }];
     const layout = { height: 300, margin: { t: 30, b: 30, l: 30, r: 30 } };
     Plotly.newPlot('satisfactionScoreChart', data, layout);
@@ -138,8 +203,8 @@ const Dashboard = () => {
 
   const createChurnRiskChart = () => {
     const data = [{
-      values: churnRisk.map(risk => risk.value),
-      labels: churnRisk.map(risk => risk.risk),
+      values: churnRisk[0].values,
+      labels: churnRisk[0].labels,
       type: 'pie'
     }];
     const layout = { title: 'Churn Risk Distribution', height: 300, margin: { t: 30, b: 30, l: 30, r: 30 } };
@@ -148,9 +213,9 @@ const Dashboard = () => {
 
   const createRFMSegmentationChart = () => {
     const data = [{
-      x: rfmSegmentation.map(point => point.recency),
-      y: rfmSegmentation.map(point => point.frequency),
-      z: rfmSegmentation.map(point => point.monetary),
+      x: rfmSegmentation[0].x,
+      y: rfmSegmentation[0].y,
+      z: rfmSegmentation[0].z,
       mode: 'markers',
       type: 'scatter3d',
       marker: { size: 5, color: rfmSegmentation.map(point => point.monetary), colorscale: 'Viridis' }
@@ -234,10 +299,16 @@ const Dashboard = () => {
             <Menu.Item key="1" icon={<DashboardOutlined />}>
               Dashboard
             </Menu.Item>
-            <Menu.Item key="2" icon={<BarChartOutlined />}>
+            <Menu.Item key="2" icon={<BarChartOutlined />} onClick={()=>{
+              console.log("clicked")
+              navigate('/cdp-transformation')
+            }}>
               Analytics
             </Menu.Item>
-            <Menu.Item key="3" icon={<UserOutlined />}>
+            <Menu.Item key="3" icon={<UserOutlined />} onClick={()=>{
+              console.log("clicked")
+              navigate('/userflow')
+            }}>
               User Flow
             </Menu.Item>
           </Menu>

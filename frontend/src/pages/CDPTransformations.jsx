@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Typography, ConfigProvider, Card } from 'antd';
 import { HomeOutlined, BarChartOutlined, UserOutlined, AppstoreOutlined, MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import Plotly from 'plotly.js-dist-min';
+import mermaid from 'mermaid';
+import { useNavigate } from 'react-router-dom';
+
 
 const { Header, Content, Sider } = Layout;
 const { Title } = Typography;
@@ -22,9 +25,32 @@ const customTheme = {
   }
 };
 
+const MermaidDiagram = ({ mermaidCode }) => {
+  useEffect(() => {
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        primaryColor: '#ffdc6f',
+        primaryTextColor: '#000',
+        primaryBorderColor: '#000',
+        lineColor: '#000',
+        secondaryColor: '#ffdc6f',
+        tertiaryColor: '#ffdc6f'
+      }
+    });
+
+    mermaid.contentLoaded();
+  }, []);
+
+  return (
+    <div className="mermaid" dangerouslySetInnerHTML={{ __html: mermaidCode }} />
+  );
+};
+
 const SankeyDiagram = () => {
   const [collapsed, setCollapsed] = useState(true);
-
+  const navigate=useNavigate();
   useEffect(() => {
     const data = [
       {
@@ -111,14 +137,83 @@ const SankeyDiagram = () => {
       });
     });
 
-    return () => {
-      Plotly.purge('sankeyDiagram');
-    };
+    // return () => {
+    //   Plotly.purge('sankeyDiagram');
+    // };
   }, []);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
+
+  const mermaidCode = `
+    erDiagram
+    customer_info {
+        INTEGER customer_id PK
+        TEXT first_name
+        TEXT last_name
+        TEXT email
+        TEXT phone_number
+        DATE date_of_birth
+        DATE registration_date
+    }
+    product_catalog {
+        INTEGER product_id PK
+        TEXT product_name
+        TEXT category
+        TEXT brand
+        REAL price
+        DATE launch_date
+    }
+    purchase_transactions {
+        INTEGER transaction_id PK
+        INTEGER customer_id FK
+        INTEGER product_id FK
+        DATE purchase_date
+        INTEGER quantity
+        REAL total_amount
+        INTEGER store_id
+    }
+    customer_service {
+        INTEGER interaction_id PK
+        INTEGER customer_id FK
+        DATE interaction_date
+        TEXT interaction_type
+        INTEGER product_id FK
+        TEXT resolution_status
+        INTEGER satisfaction_score
+    }
+    marketing_campaigns {
+        INTEGER campaign_id PK
+        TEXT campaign_name
+        DATE start_date
+        DATE end_date
+        TEXT channel
+        TEXT target_audience
+    }
+    campaign_responses {
+        INTEGER response_id PK
+        INTEGER campaign_id FK
+        INTEGER customer_id FK
+        DATE response_date
+        TEXT response_type
+    }
+    website_behavior {
+        INTEGER session_id PK
+        INTEGER customer_id FK
+        DATE visit_date
+        INTEGER pages_viewed
+        INTEGER time_spent
+        TEXT source
+    }
+    customer_info ||--o{ purchase_transactions : has
+    product_catalog ||--o{ purchase_transactions : includes
+    customer_info ||--o{ customer_service : receives
+    product_catalog ||--o{ customer_service : relates_to
+    marketing_campaigns ||--o{ campaign_responses : generates
+    customer_info ||--o{ campaign_responses : provides
+    customer_info ||--o{ website_behavior : exhibits
+  `;
 
   return (
     <ConfigProvider theme={customTheme}>
@@ -151,13 +246,18 @@ const SankeyDiagram = () => {
               }
             }}
           >
-            <Menu.Item key="1" icon={<HomeOutlined />}>
+            <Menu.Item key="1" icon={<HomeOutlined />} onClick={()=>{
+              console.log("clicked")
+              navigate('/dashboard');
+            }}>
               Dashboard
             </Menu.Item>
             <Menu.Item key="2" icon={<BarChartOutlined />}>
               Analytics
             </Menu.Item>
-            <Menu.Item key="3" icon={<UserOutlined />}>
+            <Menu.Item key="3" icon={<UserOutlined />} onClick={()=>{
+              navigate('/userflow');
+            }}>
               User Flow
             </Menu.Item>
           </Menu>
@@ -172,8 +272,11 @@ const SankeyDiagram = () => {
             <Title level={3} style={{ margin: '16px 0 16px 24px' }}>CDP Architecture Visualization</Title>
           </Header>
           <Content style={{ margin: '24px 16px 0' }}>
-            <Card style={{ minHeight: 360 }}>
+            <Card style={{ marginBottom: '24px' }}>
               <div id="sankeyDiagram" style={{ width: '100%', height: '600px' }}></div>
+            </Card>
+            <Card title="Database Schema">
+              <MermaidDiagram mermaidCode={mermaidCode} />
             </Card>
           </Content>
         </Layout>

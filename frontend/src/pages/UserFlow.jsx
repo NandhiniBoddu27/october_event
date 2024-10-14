@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Typography, ConfigProvider, Card } from 'antd';
 import { HomeOutlined, BarChartOutlined, UserOutlined, AppstoreOutlined, MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import mermaid from 'mermaid';
+import { useNavigate } from 'react-router-dom';
+
 
 const { Header, Content, Sider } = Layout;
 const { Title } = Typography;
+
 
 const customTheme = {
   token: {
@@ -35,7 +38,7 @@ const MermaidDiagram = ({ mermaidCode }) => {
 
 const WebsiteFlow = () => {
   const [collapsed, setCollapsed] = useState(true);
-
+  const navigate = useNavigate();
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
@@ -90,10 +93,16 @@ const WebsiteFlow = () => {
               }
             }}
           >
-            <Menu.Item key="1" icon={<HomeOutlined />}>
+            <Menu.Item key="1" icon={<HomeOutlined />} onClick={()=>{
+              console.log("clicked")
+              navigate('/dashboard');
+            }}>
               Dashboard
             </Menu.Item>
-            <Menu.Item key="2" icon={<BarChartOutlined />}>
+            <Menu.Item key="2" icon={<BarChartOutlined />} onClick={()=>{
+              console.log("clicked")
+              navigate('/cdp-transformation');
+            }}>
               Analytics
             </Menu.Item>
             <Menu.Item key="3" icon={<UserOutlined />}>
