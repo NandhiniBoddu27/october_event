@@ -1,332 +1,304 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Layout, Menu, Card, Table, ConfigProvider } from 'antd';
-import { UserOutlined, DashboardOutlined, TeamOutlined, ShoppingOutlined, BarChartOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { Layout, Menu, Avatar, Typography, DatePicker, Row, Col, Card, Table, ConfigProvider } from 'antd';
+import { UserOutlined, AppstoreOutlined, BarChartOutlined, DashboardOutlined, CustomerServiceOutlined } from '@ant-design/icons';
 import Plotly from 'plotly.js-dist-min';
 
 const { Header, Sider, Content } = Layout;
+const { RangePicker } = DatePicker;
+const { Title } = Typography;
 
 const Dashboard = () => {
-  const [kpis, setKpis] = useState(null);
-  const [customerSegments, setCustomerSegments] = useState(null);
-  const [monthlyRevenue, setMonthlyRevenue] = useState(null);
-  const [topCustomers, setTopCustomers] = useState(null);
-  const [productPerformance, setProductPerformance] = useState(null);
-  const [customerSatisfaction, setCustomerSatisfaction] = useState(null);
-  const [churnRisk, setChurnRisk] = useState(null);
-  const [rfmSegmentation, setRfmSegmentation] = useState(null);
-
-  const customerSegmentsRef = useRef(null);
-  const monthlyRevenueRef = useRef(null);
-  const productPerformanceRef = useRef(null);
-  const customerSatisfactionRef = useRef(null);
-  const churnRiskRef = useRef(null);
-  const rfmSegmentationRef = useRef(null);
+  const [collapsed, setCollapsed] = useState(true);
+  const [kpiData, setKpiData] = useState({});
+  const [customerSegments, setCustomerSegments] = useState([]);
+  const [monthlyRevenue, setMonthlyRevenue] = useState([]);
+  const [topCustomers, setTopCustomers] = useState([]);
+  const [productPerformance, setProductPerformance] = useState([]);
+  const [satisfactionScore, setSatisfactionScore] = useState(0);
+  const [churnRisk, setChurnRisk] = useState([]);
+  const [rfmSegmentation, setRfmSegmentation] = useState([]);
 
   useEffect(() => {
-
-    fetchKPIs();
-    fetchCustomerSegments();
-    fetchMonthlyRevenue();
-    fetchTopCustomers();
-    fetchProductPerformance();
-    fetchCustomerSatisfaction();
-    fetchChurnRisk();
-    fetchRFMSegmentation()
-
-    // setCustomerSegments([
-    //   { name: 'Segment A', value: 35 },
-    //   { name: 'Segment B', value: 40 },
-    //   { name: 'Segment C', value: 25 }
-    // ]);
-
-    // setMonthlyRevenue([
-    //   { month: 'January', revenue: 20000 },
-    //   { month: 'February', revenue: 25000 },
-    //   { month: 'March', revenue: 30000 }
-    // ]);
-
-    // setTopCustomers([
-    //   { customer_id: 'C001', first_name: 'John', last_name: 'Doe', total_lifetime_value: '$50,000' },
-    //   { customer_id: 'C002', first_name: 'Jane', last_name: 'Smith', total_lifetime_value: '$45,000' }
-    // ]);
-
-    // setProductPerformance([
-    //   { category: 'Electronics', revenue: 40000 },
-    //   { category: 'Apparel', revenue: 20000 },
-    //   { category: 'Home Goods', revenue: 15000 }
-    // ]);
-
-    // setCustomerSatisfaction({ avg_satisfaction_score: 9 });
-
-    // setChurnRisk([
-    //   { category: 'High Risk', value: 20 },
-    //   { category: 'Medium Risk', value: 50 },
-    //   { category: 'Low Risk', value: 30 }
-    // ]);
-
-    // setRfmSegmentation([
-    //   { recency: 5, frequency: 3, monetary: 1000 },
-    //   { recency: 10, frequency: 5, monetary: 2000 },
-    //   { recency: 15, frequency: 2, monetary: 500 }
-    // ]);
+    // Fetch data from APIs (mock data with more variations)
+    setKpiData({
+      total_lifetime_value: 2345678,
+      total_purchases: 78945,
+      avg_satisfaction_score: 4.3,
+    });
+    setCustomerSegments([
+      { name: 'Loyal', value: 30 },
+      { name: 'Potential', value: 25 },
+      { name: 'New', value: 20 },
+      { name: 'At Risk', value: 15 },
+      { name: 'Lost', value: 10 }
+    ]);
+    setMonthlyRevenue([
+      { month: 'Jan', revenue: 150000 },
+      { month: 'Feb', revenue: 180000 },
+      { month: 'Mar', revenue: 220000 },
+      { month: 'Apr', revenue: 190000 },
+      { month: 'May', revenue: 210000 },
+      { month: 'Jun', revenue: 240000 },
+      { month: 'Jul', revenue: 260000 },
+      { month: 'Aug', revenue: 280000 },
+      { month: 'Sep', revenue: 270000 },
+      { month: 'Oct', revenue: 290000 },
+      { month: 'Nov', revenue: 310000 },
+      { month: 'Dec', revenue: 350000 }
+    ]);
+    setTopCustomers([
+      { key: '1', customer_id: '001', first_name: 'John', last_name: 'Doe', total_lifetime_value: 25000 },
+      { key: '2', customer_id: '002', first_name: 'Jane', last_name: 'Smith', total_lifetime_value: 22000 },
+      { key: '3', customer_id: '003', first_name: 'Robert', last_name: 'Johnson', total_lifetime_value: 20500 },
+      { key: '4', customer_id: '004', first_name: 'Emily', last_name: 'Brown', total_lifetime_value: 19800 },
+      { key: '5', customer_id: '005', first_name: 'Michael', last_name: 'Davis', total_lifetime_value: 18900 }
+    ]);
+    setProductPerformance([
+      { category: 'Electronics', revenue: 980000 },
+      { category: 'Clothing', revenue: 750000 },
+      { category: 'Books', revenue: 420000 },
+      { category: 'Home & Garden', revenue: 680000 },
+      { category: 'Sports & Outdoors', revenue: 540000 },
+      { category: 'Beauty & Personal Care', revenue: 390000 }
+    ]);
+    setSatisfactionScore(4.3);
+    setChurnRisk([
+      { risk: 'Low', value: 55 },
+      { risk: 'Medium', value: 30 },
+      { risk: 'High', value: 15 }
+    ]);
+    setRfmSegmentation(Array.from({ length: 100 }, () => ({
+      recency: Math.floor(Math.random() * 100),
+      frequency: Math.floor(Math.random() * 50),
+      monetary: Math.floor(Math.random() * 10000)
+    })));
   }, []);
 
   useEffect(() => {
-    // Render plots once the data is available
-    if (customerSegments) {
-      Plotly.newPlot(customerSegmentsRef.current, [{
-        values: customerSegments.map(segment => segment.value),
-        labels: customerSegments.map(segment => segment.name),
-        type: 'pie'
-      }], { height: 400, width: '100%' });
-    }
+    // Create charts after data is loaded
+    if (customerSegments.length > 0) createCustomerSegmentsChart();
+    if (monthlyRevenue.length > 0) createMonthlyRevenueChart();
+    if (productPerformance.length > 0) createProductPerformanceChart();
+    if (satisfactionScore > 0) createSatisfactionScoreChart();
+    if (churnRisk.length > 0) createChurnRiskChart();
+    if (rfmSegmentation.length > 0) createRFMSegmentationChart();
+  }, [customerSegments, monthlyRevenue, productPerformance, satisfactionScore, churnRisk, rfmSegmentation]);
 
-    if (monthlyRevenue) {
-      Plotly.newPlot(monthlyRevenueRef.current, [{
-        x: monthlyRevenue.map(item => item.month),
-        y: monthlyRevenue.map(item => item.revenue),
-        type: 'scatter',
-        mode: 'lines+markers'
-      }], { height: 400, width: '100%' });
-    }
-
-    if (productPerformance) {
-      Plotly.newPlot(productPerformanceRef.current, [{
-        y: productPerformance.map(item => item.category),
-        x: productPerformance.map(item => item.revenue),
-        type: 'bar',
-        orientation: 'h'
-      }], { height: 400, width: '100%' });
-    }
-
-    if (customerSatisfaction) {
-      Plotly.newPlot(customerSatisfactionRef.current, [{
-        type: 'indicator',
-        mode: 'gauge+number',
-        value: customerSatisfaction.avg_satisfaction_score,
-        gauge: { axis: { range: [null, 10] }, bar: { color: '#ffb800' } }
-      }], { height: 400, width: '100%' });
-    }
-
-    if (churnRisk) {
-      Plotly.newPlot(churnRiskRef.current, [{
-        values: churnRisk.map(risk => risk.value),
-        labels: churnRisk.map(risk => risk.category),
-        type: 'pie'
-      }], { height: 400, width: '100%' });
-    }
-
-    if (rfmSegmentation) {
-      Plotly.newPlot(rfmSegmentationRef.current, [{
-        x: rfmSegmentation.map(item => item.recency),
-        y: rfmSegmentation.map(item => item.frequency),
-        z: rfmSegmentation.map(item => item.monetary),
-        mode: 'markers',
-        type: 'scatter3d',
-        marker: { size: 5 }
-      }], { height: 600, width: '100%' });
-    }
-  }, [customerSegments, monthlyRevenue, productPerformance, customerSatisfaction, churnRisk, rfmSegmentation]);
-
-  const domain="http://localhost:800"
-  const fetchKPIs = async () => {
-    try {
-      const response = await fetch('http://localhost:8000/kpis');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await response.json();
-      console.log(data)
-      setKpis(data);
-    } catch (error) {
-      console.error('Error fetching KPIs:', error);
-    }
+  const createCustomerSegmentsChart = () => {
+    const data = [{
+      values: customerSegments.map(segment => segment.value),
+      labels: customerSegments.map(segment => segment.name),
+      type: 'pie'
+    }];
+    const layout = { title: 'Customer Segment Distribution', height: 300, margin: { t: 30, b: 30, l: 30, r: 30 } };
+    Plotly.newPlot('customerSegmentsChart', data, layout);
   };
 
-  const fetchCustomerSegments = async () => {
-    try {
-      const response = await fetch(domain+'/customer_segments');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-      setCustomerSegments(data);
-    } catch (error) {
-      console.error('Error fetching customer segments:', error);
-    }
+  const createMonthlyRevenueChart = () => {
+    const data = [{
+      x: monthlyRevenue.map(item => item.month),
+      y: monthlyRevenue.map(item => item.revenue),
+      type: 'scatter',
+      mode: 'lines+markers'
+    }];
+    const layout = { title: 'Monthly Revenue Trend', height: 300, margin: { t: 30, b: 30, l: 30, r: 30 } };
+    Plotly.newPlot('monthlyRevenueChart', data, layout);
   };
 
-  const fetchMonthlyRevenue = async () => {
-    try {
-      const response = await fetch(domain+'/monthly_revenue');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-      setMonthlyRevenue(data);
-    } catch (error) {
-      console.error('Error fetching monthly revenue:', error);
-    }
+  const createProductPerformanceChart = () => {
+    const data = [{
+      y: productPerformance.map(item => item.category),
+      x: productPerformance.map(item => item.revenue),
+      type: 'bar',
+      orientation: 'h'
+    }];
+    const layout = { title: 'Product Category Performance', height: 300, margin: { t: 30, b: 30, l: 100, r: 30 } };
+    Plotly.newPlot('productPerformanceChart', data, layout);
   };
 
-  const fetchTopCustomers = async () => {
-    try {
-      const response = await fetch(domain+'/top_customers');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+  const createSatisfactionScoreChart = () => {
+    const data = [{
+      type: 'indicator',
+      mode: 'gauge+number',
+      value: satisfactionScore,
+      title: { text: 'Customer Satisfaction Score' },
+      gauge: {
+        axis: { range: [null, 5] },
+        bar: { color: 'darkblue' },
+        steps: [
+          { range: [0, 2], color: 'red' },
+          { range: [2, 3.5], color: 'yellow' },
+          { range: [3.5, 5], color: 'green' }
+        ],
       }
-      const data = await response.json();
-      setTopCustomers(data);
-    } catch (error) {
-      console.error('Error fetching top customers:', error);
-    }
+    }];
+    const layout = { height: 300, margin: { t: 30, b: 30, l: 30, r: 30 } };
+    Plotly.newPlot('satisfactionScoreChart', data, layout);
   };
 
-  const fetchProductPerformance = async () => {
-    try {
-      const response = await fetch(domain+'/product_category_performance');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-      setProductPerformance(data);
-    } catch (error) {
-      console.error('Error fetching product performance:', error);
-    }
+  const createChurnRiskChart = () => {
+    const data = [{
+      values: churnRisk.map(risk => risk.value),
+      labels: churnRisk.map(risk => risk.risk),
+      type: 'pie'
+    }];
+    const layout = { title: 'Churn Risk Distribution', height: 300, margin: { t: 30, b: 30, l: 30, r: 30 } };
+    Plotly.newPlot('churnRiskChart', data, layout);
   };
 
-  const fetchCustomerSatisfaction = async () => {
-    try {
-      const response = await fetch(domain+'/customer_satisfaction');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-      setCustomerSatisfaction(data);
-    } catch (error) {
-      console.error('Error fetching customer satisfaction:', error);
-    }
+  const createRFMSegmentationChart = () => {
+    const data = [{
+      x: rfmSegmentation.map(point => point.recency),
+      y: rfmSegmentation.map(point => point.frequency),
+      z: rfmSegmentation.map(point => point.monetary),
+      mode: 'markers',
+      type: 'scatter3d',
+      marker: { size: 5, color: rfmSegmentation.map(point => point.monetary), colorscale: 'Viridis' }
+    }];
+    const layout = { title: 'RFM Segmentation', height: 400, margin: { t: 30, b: 30, l: 30, r: 30 } };
+    Plotly.newPlot('rfmSegmentationChart', data, layout);
   };
 
-  const fetchChurnRisk = async () => {
-    try {
-      const response = await fetch(domain+'/churn_risk');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-      setChurnRisk(data);
-    } catch (error) {
-      console.error('Error fetching churn risk:', error);
-    }
-  };
+  const renderKPICards = () => (
+    <Row gutter={[16, 16]}>
+      {Object.entries(kpiData).map(([key, value]) => (
+        <Col span={8} key={key}>
+          <Card title={key.replace(/_/g, ' ').toUpperCase()}>
+            <p style={{ fontSize: '24px', fontWeight: 'bold' }}>{value}</p>
+          </Card>
+        </Col>
+      ))}
+    </Row>
+  );
 
-  const fetchRFMSegmentation = async () => {
-    try {
-      const response = await fetch(domain+'/rfm_segmentation');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-      setRfmSegmentation(data);
-    } catch (error) {
-      console.error('Error fetching RFM segmentation:', error);
-    }
-  };
+  const renderTopCustomers = () => (
+    <Table
+      columns={[
+        { title: 'Customer ID', dataIndex: 'customer_id', key: 'customer_id' },
+        { title: 'First Name', dataIndex: 'first_name', key: 'first_name' },
+        { title: 'Last Name', dataIndex: 'last_name', key: 'last_name' },
+        { title: 'Lifetime Value', dataIndex: 'total_lifetime_value', key: 'total_lifetime_value' },
+      ]}
+      dataSource={topCustomers}
+      pagination={false}
+    />
+  );
 
   return (
-    <ConfigProvider>
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: '#EAB308',
+          colorLink: '#EAB308',
+          colorLinkHover: '#f7931f',
+          colorBgLayout: '#ffffff',
+          colorInfo: '#EAB308'
+        },
+        components: {
+          Layout: {
+            siderBg: '#ffffff',
+            triggerBg: '#EAB308'
+          }
+        }
+      }}
+    >
       <Layout style={{ minHeight: '100vh' }}>
-        <Header style={{ background: '#fff', padding: 0, height: '10vh' }}>
-          {/* Add header content here */}
-        </Header>
-        <Layout>
-          <Sider width='20%' theme='light' breakpoint='lg' collapsedWidth='0'>
-            <Menu mode='inline' defaultSelectedKeys={['1']}>
-              <Menu.Item key='1' icon={<DashboardOutlined />}>
-                Dashboard
-              </Menu.Item>
-              <Menu.Item key='2' icon={<UserOutlined />}>
-                Customers
-              </Menu.Item>
-              <Menu.Item key='3' icon={<ShoppingOutlined />}>
-                Products
-              </Menu.Item>
-              <Menu.Item key='4' icon={<BarChartOutlined />}>
-                Analytics
-              </Menu.Item>
-            </Menu>
-          </Sider>
-          <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-            <div style={{ padding: 24, background: '#fff', textAlign: 'center' }}>
-              {/* KPIs */}
-              <Card title='Key Performance Indicators' style={{ marginBottom: '20px' }}>
-                {kpis && (
-                  <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                    <Card.Grid style={{ width: '25%', textAlign: 'center' }}>
-                      <h3>Total Customers</h3>
-                      <p>{kpis.total_customers}</p>
-                    </Card.Grid>
-                    <Card.Grid style={{ width: '25%', textAlign: 'center' }}>
-                      <h3>Total Lifetime value</h3>
-                      <p>{kpis.total_lifetime_value}</p>
-                    </Card.Grid>
-                    <Card.Grid style={{ width: '25%', textAlign: 'center' }}>
-                      <h3>Avg Order value</h3>
-                      <p>{kpis.average_order_value}</p>
-                    </Card.Grid>
-                    <Card.Grid style={{ width: '25%', textAlign: 'center' }}>
-                      <h3>Retention Rate</h3>
-                      <p>{kpis.retention_rate}</p>
-                    </Card.Grid>
-                  </div>
-                )}
-              </Card>
-
-              {/* Customer Segment Distribution */}
-              <Card title='Customer Segment Distribution' style={{ marginBottom: '20px' }}>
-                <div ref={customerSegmentsRef}></div>
-              </Card>
-
-              {/* Monthly Revenue */}
-              <Card title='Monthly Revenue Trend' style={{ marginBottom: '20px' }}>
-                <div ref={monthlyRevenueRef}></div>
-              </Card>
-
-              {/* Top Customers */}
-              <Card title='Top 5 Customers by Lifetime Value' style={{ marginBottom: '20px' }}>
-                <Table
-                  dataSource={topCustomers}
-                  columns={[
-                    { title: 'Customer ID', dataIndex: 'customer_id', key: 'customer_id' },
-                    { title: 'First Name', dataIndex: 'first_name', key: 'first_name' },
-                    { title: 'Last Name', dataIndex: 'last_name', key: 'last_name' },
-                    { title: 'Lifetime Value', dataIndex: 'total_lifetime_value', key: 'total_lifetime_value' }
-                  ]}
-                />
-              </Card>
-
-              {/* Product Performance */}
-              <Card title='Product Category Performance' style={{ marginBottom: '20px' }}>
-                <div ref={productPerformanceRef}></div>
-              </Card>
-
-              {/* Customer Satisfaction */}
-              <Card title='Customer Satisfaction Score' style={{ marginBottom: '20px' }}>
-                <div ref={customerSatisfactionRef}></div>
-              </Card>
-
-              {/* Churn Risk */}
-              <Card title='Customer Churn Risk' style={{ marginBottom: '20px' }}>
-                <div ref={churnRiskRef}></div>
-              </Card>
-
-              {/* RFM Segmentation */}
-              <Card title='RFM Segmentation (3D)' style={{ marginBottom: '20px' }}>
-                <div ref={rfmSegmentationRef}></div>
-              </Card>
-            </div>
+        <Sider
+          collapsible
+          collapsed={collapsed}
+          onCollapse={setCollapsed}
+          style={{
+            backgroundColor: '#ffffff',
+            boxShadow: '2px 0 8px 0 rgba(29,35,41,.05)'
+          }}
+          theme="light"
+          width="20%"
+        >
+          <div className="logo" style={{ padding: '16px', textAlign: 'center' }}>
+            <AppstoreOutlined style={{ fontSize: '32px', color: '#EAB308' }} />
+          </div>
+          <Menu
+            theme="light"
+            defaultSelectedKeys={['1']}
+            mode="inline"
+            style={{
+              '& .ant-menu-item': {
+                margin: '4px 0',
+                borderRadius: '4px',
+                '&:hover': {
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+                }
+              }
+            }}
+          >
+            <Menu.Item key="1" icon={<DashboardOutlined />}>
+              Dashboard
+            </Menu.Item>
+            <Menu.Item key="2" icon={<BarChartOutlined />}>
+              Analytics
+            </Menu.Item>
+            <Menu.Item key="3" icon={<UserOutlined />}>
+              User Flow
+            </Menu.Item>
+          </Menu>
+        </Sider>
+        <Layout className="site-layout">
+          <Header style={{ padding: 0, background: '#fff' }}>
+            <Row justify="space-between" align="middle" style={{ height: '100%' }}>
+              <Col span={12}>
+                <Title level={3} style={{ margin: '0 0 0 16px' }}>
+                  CDP Dashboard
+                </Title>
+              </Col>
+              <Col span={8} style={{ textAlign: 'right' }}>
+                <Avatar icon={<UserOutlined />} style={{ marginRight: 16 }} />
+              </Col>
+            </Row>
+          </Header>
+          <Content style={{ margin: '16px' }}>
+            <Card style={{ marginBottom: '16px' }}>
+              <RangePicker style={{ width: '300px' }} />
+            </Card>
+            <Card style={{ marginBottom: '16px' }}>
+              {renderKPICards()}
+            </Card>
+            <Row gutter={[16, 16]}>
+              <Col span={12}>
+                <Card title="Customer Segments">
+                  <div id="customerSegmentsChart" style={{ width: '100%', height: 300 }}></div>
+                </Card>
+              </Col>
+              <Col span={12}>
+                <Card title="Monthly Revenue">
+                  <div id="monthlyRevenueChart" style={{ width: '100%', height: 300 }}></div>
+                </Card>
+              </Col>
+              <Col span={24}>
+                <Card title="Top Customers">
+                  {renderTopCustomers()}
+                </Card>
+              </Col>
+              <Col span={12}>
+                <Card title="Product Performance">
+                  <div id="productPerformanceChart" style={{ width: '100%', height: 300 }}></div>
+                </Card>
+              </Col>
+              <Col span={12}>
+                <Card title="Customer Satisfaction">
+                  <div id="satisfactionScoreChart" style={{ width: '100%', height: 300 }}></div>
+                </Card>
+              </Col>
+              <Col span={12}>
+                <Card title="Churn Risk">
+                  <div id="churnRiskChart" style={{ width: '100%', height: 300 }}></div>
+                </Card>
+              </Col>
+              <Col span={12}>
+                <Card title="RFM Segmentation">
+                  <div id="rfmSegmentationChart" style={{ width: '100%', height: 400 }}></div>
+                </Card>
+              </Col>
+            </Row>
           </Content>
         </Layout>
       </Layout>

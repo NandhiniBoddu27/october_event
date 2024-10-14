@@ -1,121 +1,126 @@
 import React, { useState } from 'react';
-import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import { Layout, Form, Input, Button, Typography, Space, ConfigProvider, message } from 'antd';
-import { UserOutlined, LockOutlined, GoogleOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Typography, Space, message, Spin, Card, Divider } from 'antd';
+import { UserOutlined, LockOutlined, AppstoreOutlined } from '@ant-design/icons';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { ConfigProvider } from 'antd';
 import { useNavigate } from 'react-router-dom';
-const { Content } = Layout;
-const { Title, Text } = Typography;
 
-const theme = {
-  token: {
-    colorPrimary: '#ffb800',
-    colorLink: '#ffb800',
-    colorLinkHover: '#f7931f',
-    colorBgLayout: '#ffffff',
-    colorInfo: '#ffb800'
-  },
-  components: {
-    Layout: {
-      siderBg: 'rgb(245,245,245)',
-      triggerBg: 'rgb(241,241,241)'
-    }
-  }
-};
+
+const { Title, Text } = Typography;
 
 const LoginPage = () => {
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
   const navigate = useNavigate();
 
 
-  const onFinish = (values) => {
+  const handleSubmit = (values) => {
+    if (!values.email || !values.password) {
+      message.error('Please fill in all fields');
+      return;
+    }
     setLoading(true);
-    // Implement your login logic here
-    console.log('Received values of form: ', values);
     setTimeout(() => {
       setLoading(false);
-      message.success('Login successful!');
+      message.success('Successfully logged in!');
+      navigate('/dashboard');
     }, 2000);
-    navigate('/dashboard');
-
   };
 
-  const onGoogleLoginSuccess = (credentialResponse) => {
+  const onGoogleSuccess = (credentialResponse) => {
     console.log(credentialResponse);
-    navigate('/dashboard');
-    message.success('Google Sign-In successful!');
-    // Implement your Google Sign-In logic here
+    message.success('Successfully logged in with Google!');
   };
 
-  const onGoogleLoginError = () => {
+  const onGoogleError = () => {
     message.error('Google Sign-In failed. Please try again.');
   };
 
   return (
-    <ConfigProvider theme={theme}>
-      <Layout style={{ minHeight: '100vh' }}>
-        <Content style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <div style={{ width: '100%', maxWidth: '400px', padding: '20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}>
-            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-              <img src='/path-to-your-logo.png' alt='CustomerCompass 360 Logo' style={{ width: '150px', marginBottom: '16px' }} />
-              <Title level={2} style={{ margin: 0, color: '#ffb800' }}>CustomerCompass 360</Title>
-              <Text type='secondary'>Navigating Customer Insights with Precision</Text>
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: '#EAB308',
+          colorLink: '#EAB308',
+          colorLinkHover: '#EAB308',
+          colorBgLayout: '#EAB308',
+          colorInfo: '#EAB308'
+        },
+        components: {
+          Layout: {
+            siderBg: '#EAB308',
+            triggerBg: '#EAB308'
+          }
+        }
+      }}
+    >
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#f0f2f5'
+      }}>
+        <Card
+          style={{
+            width: 400,
+            boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+            borderRadius: '8px'
+          }}
+        >
+          <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+            <div style={{ textAlign: 'center' }}>
+              <AppstoreOutlined style={{ fontSize: '48px', color: '#EAB308', marginBottom: '16px' }} />
+              <Title level={2}>Unified Customer Insights Platform</Title>
+              <Text type="secondary">Empowering data-driven decisions through comprehensive customer understanding.</Text>
             </div>
             <Form
-              name='normal_login'
-              initialValues={{ remember: true }}
-              onFinish={onFinish}
+              form={form}
+              name="login"
+              onFinish={handleSubmit}
+              layout="vertical"
             >
               <Form.Item
-                name='email'
-                rules={[{ required: true, message: 'Please input your Email!' }]}
+                name="email"
+                rules={[
+                  { required: true, message: 'Please input your email!' },
+                  { type: 'email', message: 'Please enter a valid email!' }
+                ]}
               >
-                <Input prefix={<UserOutlined />} placeholder='Email' />
+                <Input prefix={<UserOutlined />} placeholder="Email" />
               </Form.Item>
               <Form.Item
-                name='password'
-                rules={[{ required: true, message: 'Please input your Password!' }]}
+                name="password"
+                rules={[{ required: true, message: 'Please input your password!' }]}
               >
-                <Input.Password prefix={<LockOutlined />} placeholder='Password' />
+                <Input.Password prefix={<LockOutlined />} placeholder="Password" />
               </Form.Item>
               <Form.Item>
-                <Button type='primary' htmlType='submit' style={{ width: '100%' }} loading={loading}>
-                  Log in
+                <Button type="primary" htmlType="submit" block loading={loading}>
+                  {loading ? <Spin /> : 'Log in'}
                 </Button>
               </Form.Item>
-              <Form.Item>
-                <GoogleOAuthProvider clientId='YOUR_GOOGLE_CLIENT_ID'>
-                  <GoogleLogin
-                    onSuccess={onGoogleLoginSuccess}
-                    onError={onGoogleLoginError}
-                    useOneTap
-                    render={(renderProps) => (
-                      <Button 
-                        onClick={renderProps.onClick} 
-                        disabled={renderProps.disabled} 
-                        icon={<GoogleOutlined />} 
-                        style={{ width: '100%' }}
-                      >
-                        Sign in with Google
-                      </Button>
-                    )}
-                  />
-                </GoogleOAuthProvider>
-              </Form.Item>
-              <Form.Item>
-                <Space style={{ width: '100%', justifyContent: 'space-between' }}>
-                  <a href='/forgot-password' style={{ fontSize: '14px' }}>Forgot password?</a>
-                  <Text type='secondary' style={{ fontSize: '14px' }}>
-                    New user? <a href='/signup'>Sign up</a>
-                  </Text>
-                </Space>
-              </Form.Item>
             </Form>
-          </div>
-        </Content>
-      </Layout>
+            <Divider style={{ margin: '8px 0' }}>Or sign in with</Divider>
+            <div style={{ textAlign: 'center' }}>
+              <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
+                <GoogleLogin
+                  onSuccess={onGoogleSuccess}
+                  onError={onGoogleError}
+                  useOneTap
+                />
+              </GoogleOAuthProvider>
+            </div>
+            <div style={{ textAlign: 'center', marginTop: '16px' }}>
+              <Text>
+                Don't have an account? <a href="#">Sign up</a>
+              </Text>
+            </div>
+          </Space>
+        </Card>
+      </div>
     </ConfigProvider>
   );
 };
 
 export default LoginPage;
-
